@@ -78,16 +78,20 @@ public:
       set_global_map_service = nh.serviceClient<hdl_global_localization::SetGlobalMap>("/hdl_global_localization/set_global_map");
       query_global_localization_service = nh.serviceClient<hdl_global_localization::QueryGlobalLocalization>("/hdl_global_localization/query");
 
-      relocalize_server = nh.advertiseService("/relocalize", &HdlLocalizationNodelet::relocalize, this);
+      // relocalize_server = nh.advertiseService("/relocalize", &HdlLocalizationNodelet::relocalize, this);
     }
   }
 
 private:
   pcl::Registration<PointT, PointT>::Ptr create_registration() const {
-    std::string reg_method = private_nh.param<std::string>("reg_method", "NDT_OMP");
-    std::string ndt_neighbor_search_method = private_nh.param<std::string>("ndt_neighbor_search_method", "DIRECT7");
-    double ndt_neighbor_search_radius = private_nh.param<double>("ndt_neighbor_search_radius", 2.0);
-    double ndt_resolution = private_nh.param<double>("ndt_resolution", 1.0);
+    std::string reg_method;
+    private_nh.param<std::string>("reg_method", reg_method, "NDT_OMP");
+    std::string ndt_neighbor_search_method;
+    private_nh.param<std::string>("ndt_neighbor_search_method", ndt_neighbor_search_method, "DIRECT7");
+    double ndt_neighbor_search_radius;
+    private_nh.param<double>("ndt_neighbor_search_radius", ndt_neighbor_search_radius, 2.0);
+    double ndt_resolution;
+    private_nh.param<double>("ndt_resolution", ndt_resolution, 1.0);
 
     if(reg_method == "NDT_OMP") {
       NODELET_INFO("NDT_OMP is selected");
@@ -293,6 +297,7 @@ private:
       } else {
         NODELET_INFO("done");
       }
+      relocalize_server = nh.advertiseService("/relocalize", &HdlLocalizationNodelet::relocalize, this);
     }
   }
 
